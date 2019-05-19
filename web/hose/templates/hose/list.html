@@ -1,0 +1,17 @@
+{% extends "hose/base.html" %}
+
+{% block title %}Übersicht{% endblock %}
+{% block title-page %}Übersicht{% endblock %}
+
+{% block nav-list %}
+    <li class="nav-item">
+        <a class="nav-link active" href="{% url "list-index" %}">
+            <span data-feather="list"></span>
+            Übersicht <span class="sr-only">(current)</span>
+        </a>
+    </li>
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}
