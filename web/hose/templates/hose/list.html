@@ -5,10 +5,10 @@
 {% block title-page %}Übersicht{% endblock %}
 
 {% block nav-list %}
-    <li class="nav-item">
-        <a class="nav-link active" href="{% url "list-index" %}">
-            <span data-feather="list"></span>
-            Übersicht <span class="sr-only">(current)</span>
+    <li class="nav-item active">
+        <a class="nav-link" href="{% url "list-index" %}">
+            <i class="fas fa-fw fa-list"></i>
+            <span>Übersicht</span>
         </a>
     </li>
 {% endblock %}

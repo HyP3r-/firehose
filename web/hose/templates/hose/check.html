@@ -4,10 +4,10 @@
 {% block title-page %}Prüfung/Verschiebung{% endblock %}
 
 {% block nav-check %}
-    <li class="nav-item">
-        <a class="nav-link active" href="{% url "check-index" %}">
-            <span data-feather="check-square"></span>
-            Prüfung/Verschiebung <span class="sr-only">(current)</span>
+    <li class="nav-item active">
+        <a class="nav-link" href="{% url "check-index" %}">
+            <i class="fas fa-fw fa-check-square"></i>
+            <span>Prüfung/Verschiebung</span>
         </a>
     </li>
 {% endblock %}

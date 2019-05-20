@@ -18,6 +18,7 @@ def link_list(request):
         hoses = hoses.filter(number=number)
     if barcode:
         hoses = hoses.filter(barcode=barcode)
+    hoses = hoses.order_by("number")
 
     response = [{
         "buildYear": hose.build_year,
