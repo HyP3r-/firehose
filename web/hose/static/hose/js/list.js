@@ -1,37 +1,95 @@
+var hoseTypes = null;
+var hoseManufacturers = null;
+
+/**
+ * Init Page
+ */
 $(function () {
-    loadList();
+    loadHoseManufacturers();
     $("#inputHoseNumber, #inputBarcode").change(function () {
-        loadList();
+        loadHoses();
     });
 });
 
 /**
+ * Load list of Hose Manufacturers
+ */
+function loadHoseManufacturers() {
+    $.get("/api/list/hoseManufacturers")
+        .done(function (data) {
+            hoseManufacturers = data.hoseManufacturers;
+            loadHoseTypes();
+        });
+}
+
+/**
+ * Load list of Hose Types
+ */
+function loadHoseTypes() {
+    $.get("/api/list/hoseTypes")
+        .done(function (data) {
+            hoseTypes = data.hoseTypes;
+            loadHoses();
+        });
+}
+
+/**
  * Load list of Hoses
  */
-function loadList() {
+function loadHoses() {
     var number = $("#inputHoseNumber").val();
     var barcode = $("#inputBarcode").val();
-    $.post("/api/link/list", {number: number, barcode: barcode})
+    $.post("/api/list/hoses", {number: number, barcode: barcode})
         .done(function (data) {
-            updateList(data.list);
-        })
-        .fail(function () {
-
+            updateHoses(data.hoses);
         });
 }
 
 /**
  * Update list
  */
-function updateList(list) {
-    var listTable = $("#listTable tbody");
-    listTable.empty();
-    $.each(list, function (index, element) {
-        var row = $("<tr/>");
-        row.append($("<td/>", {text: element.number}));
-        row.append($("<td/>", {text: element.description}));
-        row.append($("<td/>", {text: element.hoseType}));
-        row.append($("<td/>", {text: element.manufacturer}));
-        listTable.append(row);
+function updateHoses(hoses) {
+    var listTable = $("#listTable");
+
+    listTable.DataTable({
+        data: hoses,
+        columns: [
+            {
+                data: "number",
+                title: "Schlauch Nummer"
+            },
+            {
+                data: "hoseType",
+                title: "Schlauch Typ"
+            },
+            {
+                data: "length",
+                title: "Länge",
+                render: function (data, type, row, meta) {
+                    return data + " m";
+                }
+            },
+            {
+                data: "description",
+                title: "Beschreibung"
+            },
+            {
+                data: "manufacturer",
+                title: "Hersteller"
+            },
+            {
+                data: "buildYear",
+                title: "Baujahr"
+            },
+            {
+                data: "",
+                title: "Letzte Aktion"
+            },
+            {
+                data: "",
+                title: "Details"
+            }
+        ]
     });
 }
+

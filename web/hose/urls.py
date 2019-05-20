@@ -12,5 +12,7 @@ urlpatterns = [
 
 # api end points
 urlpatterns += [
-    path("api/link/list", api.link_list),
+    path("api/list/hoseManufacturers", api.list_hoses_manufacturers),
+    path("api/list/hoseTypes", api.list_hoses_types),
+    path("api/list/hoses", api.list_hoses),
 ]
