@@ -1,4 +1,5 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest
+from django.http.response import HttpResponseBase, HttpResponse
 from rest_framework.decorators import api_view
 
 from hose.models import Hose, HoseManufacturer, HoseType, HoseEvent
@@ -46,11 +47,42 @@ def list_hoses(request):
         "barcode": hose.barcode,
         "buildYear": hose.build_year,
         "description": hose.description,
-        "hoseType": hose.hose_type_id,
+        "hoseManufacturerId": hose.hose_manufacturer_id,
+        "hoseTypeId": hose.hose_type_id,
         "id": hose.id,
         "length": hose.length,
-        "manufacturer": hose.manufacturer_id,
         "number": hose.number,
     } for hose in hoses]
 
     return JsonResponse({"hoses": response})
+
+
+@api_view(["POST"])
+def list_field_update(request):
+    """
+    Return a list of hoses
+    """
+
+    # get fields
+    field = request.data.get("field")
+    id = request.data.get("id")
+    value = request.data.get("value")
+
+    # mapping from web fields to database fields
+    mapping = {
+        "barcode": "barcode",
+        "buildYear": "build_year",
+        "description": "description",
+        "hoseManufacturerId": "hose_manufacturer_id",
+        "hoseTypeId": "hose_type_id",
+        "length": "length",
+    }
+
+    # update field
+    try:
+        hose = Hose.objects.filter(id=id).first()
+        setattr(hose, mapping[field], value)
+        hose.save()
+    except:
+        return HttpResponseBadRequest()
+    return HttpResponse(status=200)

@@ -34,9 +34,9 @@ class Hose(models.Model):
     barcode = models.CharField(unique=True, null=True, max_length=250)
     build_year = models.IntegerField(null=True)
     description = models.CharField(blank=True, max_length=250)
+    hose_manufacturer = models.ForeignKey(HoseManufacturer, on_delete=models.CASCADE)
     hose_type = models.ForeignKey(HoseType, on_delete=models.CASCADE)
     length = models.FloatField()
-    manufacturer = models.ForeignKey(HoseManufacturer, on_delete=models.CASCADE)
     number = models.IntegerField(unique=True)
 
 
@@ -45,8 +45,11 @@ class HoseHistory(models.Model):
     History of a Hose
     """
 
+    class Meta:
+        unique_together = (("date", "hose", "hose_event"),)
+
     date = models.DateTimeField()
     description = models.CharField(blank=True, max_length=250)
-    event = models.ForeignKey(HoseEvent, on_delete=models.CASCADE)
     hose = models.ForeignKey(Hose, on_delete=models.CASCADE)
+    hose_event = models.ForeignKey(HoseEvent, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)

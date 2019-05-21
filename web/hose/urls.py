@@ -16,4 +16,5 @@ urlpatterns += [
     path("api/list/hoseManufacturers", api.list_hoses_manufacturers),
     path("api/list/hoses", api.list_hoses),
     path("api/list/hoseTypes", api.list_hoses_types),
+    path("api/list/fieldUpdate", api.list_field_update),
 ]
