@@ -34,23 +34,16 @@ def list_hoses_events(request):
     return JsonResponse({"hoseEvents": response})
 
 
-@api_view(["POST"])
+@api_view(["GET"])
 def list_hoses(request):
     """
     Return a list of hoses
     """
 
-    number = request.data["number"]
-    barcode = request.data["barcode"]
-
-    hoses = Hose.objects.all()
-    if number:
-        hoses = hoses.filter(number=number)
-    if barcode:
-        hoses = hoses.filter(barcode=barcode)
-    hoses = hoses.order_by("number")
+    hoses = Hose.objects.order_by("number")
 
     response = [{
+        "barcode": hose.barcode,
         "buildYear": hose.build_year,
         "description": hose.description,
         "hoseType": hose.hose_type_id,

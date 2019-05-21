@@ -49,9 +49,7 @@ function loadHoseEvents() {
  * Load list of Hoses
  */
 function loadHoses() {
-    var number = $("#inputHoseNumber").val();
-    var barcode = $("#inputBarcode").val();
-    $.post("/api/list/hoses", {number: number, barcode: barcode})
+    $.get("/api/list/hoses", {})
         .done(function (data) {
             updateHoses(data.hoses);
         });
@@ -114,7 +112,6 @@ function updateHoses(hoses) {
                 }
             },
             {
-                className: "align-middle",
                 data: "length",
                 title: "Länge",
                 render: function (data, type, row, meta) {
@@ -136,11 +133,17 @@ function updateHoses(hoses) {
                 }
             },
             {
-                className: "align-middle",
                 data: "buildYear",
                 title: "Baujahr",
                 render: function (data, type, row, meta) {
                     return createInput(row, data, "buildYear", "Baujahr");
+                }
+            },
+            {
+                data: "barcode",
+                title: "Barcode",
+                render: function (data, type, row, meta) {
+                    return createInput(row, data, "barcode", "Barcode");
                 }
             },
             {
