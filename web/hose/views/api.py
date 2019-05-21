@@ -1,7 +1,7 @@
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 
-from hose.models import Hose, HoseManufacturer, HoseType
+from hose.models import Hose, HoseManufacturer, HoseType, HoseEvent
 
 
 @api_view(["GET"])
@@ -22,6 +22,16 @@ def list_hoses_types(request):
         "name": hose_type.name,
     } for hose_type in hose_types]
     return JsonResponse({"hoseTypes": response})
+
+
+@api_view(["GET"])
+def list_hoses_events(request):
+    hose_events = HoseEvent.objects.all()
+    response = [{
+        "id": hose_event.id,
+        "name": hose_event.name,
+    } for hose_event in hose_events]
+    return JsonResponse({"hoseEvents": response})
 
 
 @api_view(["POST"])

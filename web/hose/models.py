@@ -35,7 +35,7 @@ class Hose(models.Model):
     build_year = models.IntegerField(null=True)
     description = models.CharField(blank=True, max_length=250)
     hose_type = models.ForeignKey(HoseType, on_delete=models.CASCADE)
-    length = models.IntegerField()
+    length = models.FloatField()
     manufacturer = models.ForeignKey(HoseManufacturer, on_delete=models.CASCADE)
     number = models.IntegerField(unique=True)
 

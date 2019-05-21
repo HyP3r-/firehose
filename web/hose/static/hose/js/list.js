@@ -1,5 +1,6 @@
 var hoseTypes = null;
 var hoseManufacturers = null;
+var hoseEvents = null;
 
 /**
  * Init Page
@@ -29,6 +30,17 @@ function loadHoseTypes() {
     $.get("/api/list/hoseTypes")
         .done(function (data) {
             hoseTypes = data.hoseTypes;
+            loadHoseEvents();
+        });
+}
+
+/**
+ * Load list of Hose Types
+ */
+function loadHoseEvents() {
+    $.get("/api/list/hoseEvents")
+        .done(function (data) {
+            hoseEvents = data.hoseEvents;
             loadHoses();
         });
 }
@@ -51,43 +63,97 @@ function loadHoses() {
 function updateHoses(hoses) {
     var listTable = $("#listTable");
 
+    function createSelect(row, data, values, id) {
+        var div = $("<div/>", {class: "input-group"});
+        var select = $("<select/>", {id: id + "-" + row.id, value: data, class: "custom-select"});
+        $.each(values, function (index, element) {
+            var option = $("<option/>", {text: element.name, value: element.id});
+            if (data === element.id) {
+                option.attr("selected", "selected");
+            }
+            select.append(option);
+        });
+        div.append(select);
+        return div.prop("outerHTML");
+    }
+
+    function createInput(row, data, id, placeholder, append) {
+        var div = $("<div/>", {class: "input-group"});
+        var input = $("<input/>", {
+            id: id + "-" + row.id,
+            value: data,
+            type: "text",
+            placeholder: placeholder,
+            class: "form-control"
+        });
+        div.append(input);
+        if (append) {
+            div.append(
+                $("<div/>", {"class": "input-group-append"}).append(
+                    $("<span/>", {"class": "input-group-text"}).text("m")
+                )
+            );
+        }
+        return div.prop("outerHTML");
+    }
+
     listTable.DataTable({
+        autoWidth: false,
         data: hoses,
         columns: [
             {
+                className: "align-middle font-weight-bold",
                 data: "number",
                 title: "Schlauch Nummer"
             },
             {
                 data: "hoseType",
-                title: "Schlauch Typ"
+                title: "Schlauch Typ",
+                render: function (data, type, row, meta) {
+                    return createSelect(row, data, hoseTypes, "hoseTypes");
+                }
             },
             {
+                className: "align-middle",
                 data: "length",
                 title: "Länge",
                 render: function (data, type, row, meta) {
-                    return data + " m";
+                    return createInput(row, data, "buildYear", "Baujahr", "m");
                 }
             },
             {
                 data: "description",
-                title: "Beschreibung"
+                title: "Beschreibung",
+                render: function (data, type, row, meta) {
+                    return createInput(row, data, "description", "Beschreibung");
+                }
             },
             {
                 data: "manufacturer",
-                title: "Hersteller"
+                title: "Hersteller",
+                render: function (data, type, row, meta) {
+                    return createSelect(row, data, hoseManufacturers, "hoseManufacturers");
+                }
             },
             {
+                className: "align-middle",
                 data: "buildYear",
-                title: "Baujahr"
+                title: "Baujahr",
+                render: function (data, type, row, meta) {
+                    return createInput(row, data, "buildYear", "Baujahr");
+                }
             },
             {
                 data: "",
                 title: "Letzte Aktion"
             },
             {
-                data: "",
-                title: "Details"
+                className: "align-middle",
+                title: "Details",
+                render: function (data, type, row, meta) {
+                    var button = $("<button/>", {type: "button", class: "btn btn-success btn-sm", text: "Details"});
+                    return button.prop("outerHTML");
+                }
             }
         ]
     });
