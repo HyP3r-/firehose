@@ -23,11 +23,13 @@ $.ajaxSetup({
 });
 
 /**
- * bind jquery ajax request to pace
+ * Helper function for post requests
  */
-window.paceOptions = {
-    restartOnRequestAfter: 50,
-    ajax: {
-        trackMethods: ["GET", "POST"]
-    }
+$.postJSON = function (url, data) {
+    return jQuery.ajax({
+        "type": "POST",
+        "url": url,
+        "contentType": "application/json",
+        "data": JSON.stringify(data)
+    });
 };

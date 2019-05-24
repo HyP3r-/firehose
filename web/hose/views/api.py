@@ -50,6 +50,7 @@ def list_hoses(request):
         "hoseManufacturerId": hose.hose_manufacturer_id,
         "hoseTypeId": hose.hose_type_id,
         "id": hose.id,
+        "lastAction": "",
         "length": hose.length,
         "number": hose.number,
     } for hose in hoses]

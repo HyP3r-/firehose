@@ -93,7 +93,7 @@ function createSelect(data, type, row, meta, field, classes, values) {
 /**
  * Create Input for UI
  */
-function createInput(data, type, row, meta, field, width, classes, placeholder, appendText) {
+function createInput(data, type, row, meta, field, width, classes, placeholder, fieldType, appendText) {
     if (type !== "display") {
         return data;
     }
@@ -104,6 +104,7 @@ function createInput(data, type, row, meta, field, width, classes, placeholder, 
     var input = $("<input/>", {
         "data-field": field,
         "data-id": row.id,
+        "data-type": fieldType,
         class: "form-control " + classes.join(" "),
         placeholder: placeholder,
         type: "text",
@@ -122,12 +123,44 @@ function createInput(data, type, row, meta, field, width, classes, placeholder, 
     return div.prop("outerHTML");
 }
 
+var fieldTypeMapping = {
+    "int": function (value) {
+        var _value = parseInt(value);
+        return {result: !isNaN(_value), value: _value};
+    },
+    "float": function (value) {
+        var _value = parseFloat(value);
+        return {result: !isNaN(_value), value: _value};
+    },
+    "string": function (value) {
+        return {result: true, value: value + ""};
+    }
+};
+
 /**
  * Process field change
  */
 function fieldChanged() {
     var element = $(this);
-    $.post("/api/list/fieldUpdate", {field: element.data("field"), id: element.data("id"), value: element.val()})
+    var value = element.val();
+    var fieldType = element.data("type");
+    var _value;
+
+    // try to parse the field
+    if (fieldType) {
+        _value = fieldTypeMapping[fieldType](value);
+    } else {
+        _value = {result: true, value: value}
+    }
+
+    // display error
+    if (!_value.result) {
+        fieldChangedCell(element, "table-danger");
+        return;
+    }
+
+    // send to server
+    $.postJSON("/api/list/fieldUpdate", {field: element.data("field"), id: element.data("id"), value: _value.value})
         .done(function () {
             fieldChangedCell(element, "table-success");
         })
@@ -141,10 +174,15 @@ function fieldChanged() {
  */
 function fieldChangedCell(element, className) {
     var tr = element.closest("td");
+    var timeout = element.data("timeout");
+    if (timeout) {
+        clearTimeout(timeout);
+    }
     tr.addClass(className);
-    setTimeout(function () {
+    timeout = setTimeout(function () {
         tr.toggleClass(className);
     }, 3000);
+    element.data("timeout", timeout);
 }
 
 /**
@@ -175,14 +213,14 @@ function updateHoses(hoses) {
                 data: "length",
                 title: "Länge",
                 render: function (data, type, row, meta) {
-                    return createInput(data, type, row, meta, "buildYear", "6em", ["text-center"], "Baujahr", "m");
+                    return createInput(data, type, row, meta, "buildYear", "6em", ["text-center"], "Baujahr", "float", "m");
                 }
             },
             {
                 data: "description",
                 title: "Beschreibung",
                 render: function (data, type, row, meta) {
-                    return createInput(data, type, row, meta, "description", undefined, [], "Beschreibung");
+                    return createInput(data, type, row, meta, "description", undefined, [], "Beschreibung", "string");
                 }
             },
             {
@@ -196,18 +234,18 @@ function updateHoses(hoses) {
                 data: "buildYear",
                 title: "Baujahr",
                 render: function (data, type, row, meta) {
-                    return createInput(data, type, row, meta, "buildYear", "5em", ["text-center"], "Baujahr");
+                    return createInput(data, type, row, meta, "buildYear", "5em", ["text-center"], "Baujahr", "int");
                 }
             },
             {
                 data: "barcode",
                 title: "Barcode",
                 render: function (data, type, row, meta) {
-                    return createInput(data, type, row, meta, "barcode", "6em", ["text-center"], "Barcode");
+                    return createInput(data, type, row, meta, "barcode", "6em", ["text-center"], "Barcode", "int");
                 }
             },
             {
-                /*data: "",*/
+                data: "lastAction",
                 title: "Letzte Aktion"
             },
             {
