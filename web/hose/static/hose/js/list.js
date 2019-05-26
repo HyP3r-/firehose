@@ -193,11 +193,7 @@ function fieldChangedCell(element, className) {
 function updateHoses(hoses) {
     var listTable = $("#listTable");
     dataTable = listTable.DataTable({
-        drawCallback: function () {
-            listTable.find("tbody td input,select").change(fieldChanged);
-        },
         autoWidth: false,
-        data: hoses,
         columns: [
             {
                 className: "align-middle font-weight-bold",
@@ -279,7 +275,21 @@ function updateHoses(hoses) {
                     return button.prop("outerHTML");
                 }
             }
-        ]
+        ],
+        createdRow: function (row, data, dataIndex) {
+            if (!data.lastAction) {
+                return;
+            }
+            var dateEvent = moment(data.lastAction.date);
+            var dateNow = moment();
+            if (moment.duration(dateNow.diff(dateEvent)).asYears() > 1) {
+                $(row).addClass("table-warning");
+            }
+        },
+        data: hoses,
+        drawCallback: function () {
+            listTable.find("tbody td input,select").change(fieldChanged);
+        }
     });
 }
 

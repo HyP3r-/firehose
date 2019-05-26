@@ -1,4 +1,3 @@
-from django.db.models import Avg, F, Window, Max, Prefetch
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.http.response import HttpResponse
 from rest_framework.decorators import api_view
