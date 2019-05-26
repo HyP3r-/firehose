@@ -22,17 +22,21 @@ $.ajaxSetup({
     }
 });
 
+
 /**
  * Helper function for post requests
  */
-$.postJSON = function (url, data) {
-    return jQuery.ajax({
-        "type": "POST",
-        "url": url,
-        "contentType": "application/json",
-        "data": JSON.stringify(data)
-    });
-};
+$.each(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "TRACE"], function (index, element) {
+    $[element.toLowerCase() + "JSON"] = function (url, data) {
+        return jQuery.ajax({
+            "type": element,
+            "url": url,
+            "contentType": "application/json",
+            "data": JSON.stringify(data)
+        });
+    };
+});
+
 
 /**
  * Switch local of moment.js

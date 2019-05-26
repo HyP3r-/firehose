@@ -1,6 +1,7 @@
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.http.response import HttpResponse
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 
 from hose.models import Hose, HoseManufacturer, HoseType, HoseEvent, HoseHistory
 
@@ -65,38 +66,7 @@ def list_hoses(request):
 
 
 @api_view(["POST"])
-def list_field_update(request):
-    """
-    Return a list of hoses
-    """
-
-    # get fields
-    field = request.data.get("field")
-    id = request.data.get("id")
-    value = request.data.get("value")
-
-    # mapping from web fields to database fields
-    mapping = {
-        "barcode": "barcode",
-        "buildYear": "build_year",
-        "description": "description",
-        "hoseManufacturerId": "hose_manufacturer_id",
-        "hoseTypeId": "hose_type_id",
-        "length": "length",
-    }
-
-    # update field
-    try:
-        hose = Hose.objects.filter(id=id).first()
-        setattr(hose, mapping[field], value)
-        hose.save()
-    except:
-        return HttpResponseBadRequest()
-    return HttpResponse(status=200)
-
-
-@api_view(["POST"])
-def list_details(request):
+def list_history(request):
     """
     Return a list of hoses
     """
@@ -114,3 +84,50 @@ def list_details(request):
     } for hose_history_entry in hose_history]
 
     return JsonResponse({"hoseHistory": response})
+
+
+class ListHose(APIView):
+    def post(self, request, format=None):
+        """
+        Create Hose
+        """
+
+        pass
+
+    def put(self, request, format=None):
+        """
+        Update Hose
+        """
+
+        # get fields
+        field = request.data.get("field")
+        id = request.data.get("id")
+        value = request.data.get("value")
+
+        # mapping from web fields to database fields
+        mapping = {
+            "barcode": "barcode",
+            "buildYear": "build_year",
+            "description": "description",
+            "hoseManufacturerId": "hose_manufacturer_id",
+            "hoseTypeId": "hose_type_id",
+            "length": "length",
+        }
+
+        # update field
+        try:
+            hose = Hose.objects.filter(id=id).first()
+            setattr(hose, mapping[field], value)
+            hose.save()
+        except:
+            return HttpResponseBadRequest()
+        return HttpResponse(status=200)
+
+    def delete(self, request, format=None):
+        """
+        Remove Hose
+        """
+
+        hose_id = request.data.get("hoseId")
+        Hose.objects.filter(id=hose_id).delete()
+        return HttpResponse(status=200)

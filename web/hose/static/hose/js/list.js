@@ -8,9 +8,6 @@ var hoseTypes = {},
  */
 $(function () {
     loadHoseManufacturers();
-    $("#inputHoseNumber, #inputBarcode").change(function () {
-        loadHoses();
-    });
 });
 
 /**
@@ -162,7 +159,7 @@ function fieldChanged() {
     }
 
     // send to server
-    $.postJSON("/api/list/fieldUpdate", {field: element.data("field"), id: element.data("id"), value: _value.value})
+    $.putJSON("/api/list/hose", {field: element.data("field"), id: element.data("id"), value: _value.value})
         .done(function () {
             fieldChangedCell(element, "table-success");
         })
@@ -175,7 +172,7 @@ function fieldChanged() {
  * Update Table Cell
  */
 function fieldChangedCell(element, className) {
-    var tr = element.closest("td");
+    var tr = element.parents("td");
     var timeout = element.data("timeout");
     if (timeout) {
         clearTimeout(timeout);
@@ -188,20 +185,23 @@ function fieldChangedCell(element, className) {
 }
 
 /**
- * Load details of a hose and display it
+ * Load history of a hose and display it
  */
-function loadDetails() {
-    var id = $(this).data("id");
-    $.postJSON("/api/list/details", {hoseId: id})
+function loadHistory() {
+    var button = $(this);
+    var id = button.data("id");
+    $.postJSON("/api/list/history", {hoseId: id})
         .done(function (data) {
             var hoseHistory = $("#hoseHistory");
-            var hoseHistoryDetails = $("#hoseHistoryTable");
+            var hoseHistoryTable = $("#hoseHistoryTable");
 
+            // destroy old table
             if ($.fn.dataTable.isDataTable("#hoseHistoryTable")) {
-                hoseHistoryDetails.DataTable().destroy();
+                hoseHistoryTable.DataTable().destroy();
             }
 
-            hoseHistoryDetails.DataTable({
+            // create table
+            hoseHistoryTable.DataTable({
                 autoWidth: false,
                 columns: [
                     {
@@ -234,12 +234,33 @@ function loadDetails() {
                 ],
                 data: data.hoseHistory,
                 paging: false,
-                searching: false,
+                searching: false
             });
+
+            // delete button
+            $("#hoseDelete").off().one("click", function () {
+                hoseDelete(button.parents("tr"), id);
+            });
+
             hoseHistory.modal("show");
         })
         .fail(function () {
+            // TODO: show error modal
+        });
+}
 
+/**
+ * Delete a hose
+ */
+function hoseDelete(row, id) {
+    var hoseHistory = $("#hoseHistory");
+    $.deleteJSON("/api/list/hose", {hoseId: id})
+        .done(function (data) {
+            hoseHistory.modal("hide");
+            dataTable.row(row).remove().draw();
+        })
+        .fail(function () {
+            // TODO: show error modal
         });
 }
 
@@ -325,13 +346,13 @@ function updateHoses(hoses) {
             },
             {
                 className: "align-middle",
-                title: "Details",
+                title: "Verlauf",
                 render: function (data, type, row, meta) {
                     var button = $("<button/>", {
                         "data-id": row.id,
                         type: "button",
                         class: "btn btn-success btn-sm",
-                        text: "Details"
+                        text: "Verlauf"
                     });
                     return button.prop("outerHTML");
                 }
@@ -350,7 +371,7 @@ function updateHoses(hoses) {
         data: hoses,
         drawCallback: function () {
             listTable.find("tbody td input,select").change(fieldChanged);
-            listTable.find("tbody td button").click(loadDetails);
+            listTable.find("tbody td button").click(loadHistory);
         }
     });
 }
