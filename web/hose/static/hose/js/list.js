@@ -351,7 +351,7 @@ function updateHoses(hoses) {
                     var button = $("<button/>", {
                         "data-id": row.id,
                         type: "button",
-                        class: "btn btn-success btn-sm",
+                        class: "btn btn-dark btn-sm",
                         text: "Verlauf"
                     });
                     return button.prop("outerHTML");
