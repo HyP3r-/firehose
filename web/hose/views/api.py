@@ -93,3 +93,24 @@ def list_field_update(request):
     except:
         return HttpResponseBadRequest()
     return HttpResponse(status=200)
+
+
+@api_view(["POST"])
+def list_details(request):
+    """
+    Return a list of hoses
+    """
+
+    # get fields
+    hose_id = request.data.get("hoseId")
+
+    hose_history = HoseHistory.objects.filter(hose_id=hose_id).order_by("date").select_related()
+
+    response = [{
+        "date": hose_history_entry.date,
+        "description": hose_history_entry.description,
+        "hoseEvent": hose_history_entry.hose_event_id,
+        "user": hose_history_entry.user.first_name + " " + hose_history_entry.user.last_name,
+    } for hose_history_entry in hose_history]
+
+    return JsonResponse({"hoseHistory": response})

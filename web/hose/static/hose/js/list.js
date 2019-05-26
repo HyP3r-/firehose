@@ -188,6 +188,62 @@ function fieldChangedCell(element, className) {
 }
 
 /**
+ * Load details of a hose and display it
+ */
+function loadDetails() {
+    var id = $(this).data("id");
+    $.postJSON("/api/list/details", {hoseId: id})
+        .done(function (data) {
+            var hoseHistory = $("#hoseHistory");
+            var hoseHistoryDetails = $("#hoseHistoryTable");
+
+            if ($.fn.dataTable.isDataTable("#hoseHistoryTable")) {
+                hoseHistoryDetails.DataTable().destroy();
+            }
+
+            hoseHistoryDetails.DataTable({
+                autoWidth: false,
+                columns: [
+                    {
+                        data: "date",
+                        title: "Datum",
+                        render: function (data, type, row, meta) {
+                            return moment(data).format("YYYY-MM-DD HH:mm");
+                        }
+                    },
+                    {
+                        data: "description",
+                        title: "Beschreibung"
+                    },
+                    {
+                        className: "align-middle",
+                        data: "hoseEvent",
+                        title: "Ereignis",
+                        render: function (data, type, row, meta) {
+                            var span = $("<span/>", {
+                                text: hoseEvents[data].name,
+                                class: "badge " + hoseEvents[data].status
+                            });
+                            return span.prop("outerHTML");
+                        }
+                    },
+                    {
+                        data: "user",
+                        title: "Benutzer"
+                    }
+                ],
+                data: data.hoseHistory,
+                paging: false,
+                searching: false,
+            });
+            hoseHistory.modal("show");
+        })
+        .fail(function () {
+
+        });
+}
+
+/**
  * Update list
  */
 function updateHoses(hoses) {
@@ -271,7 +327,12 @@ function updateHoses(hoses) {
                 className: "align-middle",
                 title: "Details",
                 render: function (data, type, row, meta) {
-                    var button = $("<button/>", {type: "button", class: "btn btn-success btn-sm", text: "Details"});
+                    var button = $("<button/>", {
+                        "data-id": row.id,
+                        type: "button",
+                        class: "btn btn-success btn-sm",
+                        text: "Details"
+                    });
                     return button.prop("outerHTML");
                 }
             }
@@ -289,6 +350,7 @@ function updateHoses(hoses) {
         data: hoses,
         drawCallback: function () {
             listTable.find("tbody td input,select").change(fieldChanged);
+            listTable.find("tbody td button").click(loadDetails);
         }
     });
 }
