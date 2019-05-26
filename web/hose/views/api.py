@@ -1,3 +1,4 @@
+from django.db.models import OuterRef, Subquery
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.http.response import HttpResponse
 from rest_framework.decorators import api_view
@@ -43,12 +44,15 @@ def list_hoses(request):
     Return a list of hoses
     """
 
-    hoses = Hose.objects.order_by("number")
+    hose_history = HoseHistory.objects.filter(hose_id=OuterRef("pk")).order_by("-date")
+    hoses = Hose.objects \
+        .annotate(last_action_date=Subquery(hose_history.values("date")[:1])) \
+        .annotate(last_actionhose_event_id=Subquery(hose_history.values("hose_event_id")[:1])) \
+        .order_by("number")
 
     def hose_last_action(hose: Hose):
-        hose_history = HoseHistory.objects.filter(hose=hose).order_by("-date").first()
-        if hose_history:
-            return {"date": hose_history.date, "hoseEventId": hose_history.hose_event.id}
+        if hose.last_action_date:
+            return {"date": hose.last_action_date, "hoseEventId": hose.last_actionhose_event_id}
 
     response = [{
         "barcode": hose.barcode,
