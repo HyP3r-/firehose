@@ -45,7 +45,9 @@ function loadHoseTypes() {
 function loadHoseEvents() {
     $.get("/api/list/hoseEvents")
         .done(function (data) {
-            hoseEvents = data.hoseEvents;
+            $.each(data.hoseEvents, function (index, element) {
+                hoseEvents[element.id] = element;
+            });
             loadHoses();
         });
 }
@@ -246,7 +248,28 @@ function updateHoses(hoses) {
             },
             {
                 data: "lastAction",
-                title: "Letzte Aktion"
+                title: "Letzte Aktion",
+                render: function (data, type, row, meta) {
+                    var text;
+                    if (data) {
+                        text = moment(data.date).format("YYYY-MM-DD HH:mm") + " " + hoseEvents[data.hoseEventId].name;
+                    } else {
+                        text = "Keine letzte Aktion";
+                    }
+
+                    if (type !== "display") {
+                        return text;
+                    }
+
+                    var param = {text: text};
+                    if (data) {
+                        param.class = "badge " + hoseEvents[data.hoseEventId].status;
+                    } else {
+                        param.class = "badge badge-secondary"
+                    }
+
+                    return $("<span/>", param).prop("outerHTML");
+                }
             },
             {
                 className: "align-middle",

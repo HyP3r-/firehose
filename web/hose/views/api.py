@@ -1,8 +1,9 @@
+from django.db.models import Avg, F, Window, Max, Prefetch
 from django.http import JsonResponse, HttpResponseBadRequest
-from django.http.response import HttpResponseBase, HttpResponse
+from django.http.response import HttpResponse
 from rest_framework.decorators import api_view
 
-from hose.models import Hose, HoseManufacturer, HoseType, HoseEvent
+from hose.models import Hose, HoseManufacturer, HoseType, HoseEvent, HoseHistory
 
 
 @api_view(["GET"])
@@ -31,6 +32,7 @@ def list_hoses_events(request):
     response = [{
         "id": hose_event.id,
         "name": hose_event.name,
+        "status": hose_event.status,
     } for hose_event in hose_events]
     return JsonResponse({"hoseEvents": response})
 
@@ -43,6 +45,11 @@ def list_hoses(request):
 
     hoses = Hose.objects.order_by("number")
 
+    def hose_last_action(hose: Hose):
+        hose_history = HoseHistory.objects.filter(hose=hose).order_by("-date").first()
+        if hose_history:
+            return {"date": hose_history.date, "hoseEventId": hose_history.hose_event.id}
+
     response = [{
         "barcode": hose.barcode,
         "buildYear": hose.build_year,
@@ -50,7 +57,7 @@ def list_hoses(request):
         "hoseManufacturerId": hose.hose_manufacturer_id,
         "hoseTypeId": hose.hose_type_id,
         "id": hose.id,
-        "lastAction": "",
+        "lastAction": hose_last_action(hose),
         "length": hose.length,
         "number": hose.number,
     } for hose in hoses]

@@ -33,3 +33,8 @@ $.postJSON = function (url, data) {
         "data": JSON.stringify(data)
     });
 };
+
+/**
+ * Switch local of moment.js
+ */
+moment.locale(window.navigator.userLanguage || window.navigator.language);

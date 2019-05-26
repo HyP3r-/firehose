@@ -24,6 +24,7 @@ class HoseEvent(models.Model):
     """
 
     name = models.CharField(unique=True, max_length=250)
+    status = models.CharField(max_length=250)
 
 
 class Hose(models.Model):
