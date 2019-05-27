@@ -14,49 +14,49 @@ $(function () {
  * Load list of Hose Manufacturers
  */
 function loadHoseManufacturers() {
-    $.get("/api/list/hoseManufacturers")
-        .done(function (data) {
-            $.each(data.hoseManufacturers, function (index, element) {
-                hoseManufacturers[element.id] = element;
-            });
-            loadHoseTypes();
+    $.get("/api/list/hoseManufacturers"
+    ).done(function (data) {
+        $.each(data.hoseManufacturers, function (index, element) {
+            hoseManufacturers[element.id] = element;
         });
+        loadHoseTypes();
+    });
 }
 
 /**
  * Load list of Hose Types
  */
 function loadHoseTypes() {
-    $.get("/api/list/hoseTypes")
-        .done(function (data) {
-            $.each(data.hoseTypes, function (index, element) {
-                hoseTypes[element.id] = element;
-            });
-            loadHoseEvents();
+    $.get("/api/list/hoseTypes"
+    ).done(function (data) {
+        $.each(data.hoseTypes, function (index, element) {
+            hoseTypes[element.id] = element;
         });
+        loadHoseEvents();
+    });
 }
 
 /**
  * Load list of Hose Types
  */
 function loadHoseEvents() {
-    $.get("/api/list/hoseEvents")
-        .done(function (data) {
-            $.each(data.hoseEvents, function (index, element) {
-                hoseEvents[element.id] = element;
-            });
-            loadHoses();
+    $.get("/api/list/hoseEvents"
+    ).done(function (data) {
+        $.each(data.hoseEvents, function (index, element) {
+            hoseEvents[element.id] = element;
         });
+        loadHoses();
+    });
 }
 
 /**
  * Load list of Hoses
  */
 function loadHoses() {
-    $.get("/api/list/hoses", {})
-        .done(function (data) {
-            updateHoses(data.hoses);
-        });
+    $.get("/api/list/hoses", {}
+    ).done(function (data) {
+        updateHoses(data.hoses);
+    });
 }
 
 /**
@@ -159,13 +159,12 @@ function fieldChanged() {
     }
 
     // send to server
-    $.putJSON("/api/list/hose", {field: element.data("field"), id: element.data("id"), value: _value.value})
-        .done(function () {
-            fieldChangedCell(element, "table-success");
-        })
-        .fail(function () {
-            fieldChangedCell(element, "table-danger");
-        });
+    $.putJSON("/api/list/hose", {field: element.data("field"), id: element.data("id"), value: _value.value}
+    ).done(function () {
+        fieldChangedCell(element, "table-success");
+    }).fail(function () {
+        fieldChangedCell(element, "table-danger");
+    });
 }
 
 /**
@@ -190,63 +189,62 @@ function fieldChangedCell(element, className) {
 function loadHistory() {
     var button = $(this);
     var id = button.data("id");
-    $.postJSON("/api/list/history", {hoseId: id})
-        .done(function (data) {
-            var hoseHistory = $("#hoseHistory");
-            var hoseHistoryTable = $("#hoseHistoryTable");
+    $.postJSON("/api/list/history", {hoseId: id}
+    ).done(function (data) {
+        var hoseHistory = $("#hoseHistory");
+        var hoseHistoryTable = $("#hoseHistoryTable");
 
-            // destroy old table
-            if ($.fn.dataTable.isDataTable("#hoseHistoryTable")) {
-                hoseHistoryTable.DataTable().destroy();
-            }
+        // destroy old table
+        if ($.fn.dataTable.isDataTable("#hoseHistoryTable")) {
+            hoseHistoryTable.DataTable().destroy();
+        }
 
-            // create table
-            hoseHistoryTable.DataTable({
-                autoWidth: false,
-                columns: [
-                    {
-                        data: "date",
-                        title: "Datum",
-                        render: function (data, type, row, meta) {
-                            return moment(data).format("YYYY-MM-DD HH:mm");
-                        }
-                    },
-                    {
-                        data: "description",
-                        title: "Beschreibung"
-                    },
-                    {
-                        className: "align-middle",
-                        data: "hoseEvent",
-                        title: "Ereignis",
-                        render: function (data, type, row, meta) {
-                            var span = $("<span/>", {
-                                text: hoseEvents[data].name,
-                                class: "badge " + hoseEvents[data].status
-                            });
-                            return span.prop("outerHTML");
-                        }
-                    },
-                    {
-                        data: "user",
-                        title: "Benutzer"
+        // create table
+        hoseHistoryTable.DataTable({
+            autoWidth: false,
+            columns: [
+                {
+                    data: "date",
+                    title: "Datum",
+                    render: function (data, type, row, meta) {
+                        return moment(data).format("YYYY-MM-DD HH:mm");
                     }
-                ],
-                data: data.hoseHistory,
-                paging: false,
-                searching: false
-            });
-
-            // delete button
-            $("#hoseDelete").off().one("click", function () {
-                hoseDelete(button.parents("tr"), id);
-            });
-
-            hoseHistory.modal("show");
-        })
-        .fail(function () {
-            // TODO: show error modal
+                },
+                {
+                    data: "description",
+                    title: "Beschreibung"
+                },
+                {
+                    className: "align-middle",
+                    data: "hoseEvent",
+                    title: "Ereignis",
+                    render: function (data, type, row, meta) {
+                        var span = $("<span/>", {
+                            text: hoseEvents[data].name,
+                            class: "badge " + hoseEvents[data].status
+                        });
+                        return span.prop("outerHTML");
+                    }
+                },
+                {
+                    data: "user",
+                    title: "Benutzer"
+                }
+            ],
+            data: data.hoseHistory,
+            paging: false,
+            searching: false
         });
+
+        // delete button
+        $("#hoseDelete").off().one("click", function () {
+            hoseDelete(button.parents("tr"), id);
+        });
+
+        hoseHistory.modal("show");
+    }).fail(function () {
+        // TODO: show error modal
+    });
 }
 
 /**
@@ -254,14 +252,13 @@ function loadHistory() {
  */
 function hoseDelete(row, id) {
     var hoseHistory = $("#hoseHistory");
-    $.deleteJSON("/api/list/hose", {hoseId: id})
-        .done(function (data) {
-            hoseHistory.modal("hide");
-            dataTable.row(row).remove().draw();
-        })
-        .fail(function () {
-            // TODO: show error modal
-        });
+    $.deleteJSON("/api/list/hose", {hoseId: id}
+    ).done(function (data) {
+        hoseHistory.modal("hide");
+        dataTable.row(row).remove().draw();
+    }).fail(function () {
+        // TODO: show error modal
+    });
 }
 
 /**
