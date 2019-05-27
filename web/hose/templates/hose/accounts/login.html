@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Schlauchverwaltung &middot; Login</title>
+
+    <link href="{% static "hose/vendor/css/fontawesome.min.css" %}" rel="stylesheet" type="text/css">
+    <link href="{% static "hose/vendor/css/sb-admin.min.css" %}" rel="stylesheet" type="text/css">
+</head>
+
+<body class="bg-dark">
+
+<div class="container">
+    <div class="card card-login mx-auto mt-5">
+        <div class="card-header">Login</div>
+        <div class="card-body">
+            {% if form.errors and not form.non_field_errors %}
+                <div class="alert alert-warning alert-dismissible" role="alert">
+                    <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    Bitte füllen Sie beide Felder aus
+                </div>
+            {% endif %}
+
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form action="{% url 'accounts_login' %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <div class="form-label-group">
+                        <input autofocus="autofocus" class="form-control" id="inputUsername" name="username"
+                               placeholder="Benutzername" required="required" type="text">
+                        <label for="inputUsername">Benutzername</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-label-group">
+                        <input class="form-control" id="inputPassword" name="password" placeholder="Passwort"
+                               required="required" type="password">
+                        <label for="inputPassword">Passwort</label>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block" type="submit">Anmelden</button>
+                <input name="next" type="hidden" value="{{ next }}"/>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static "hose/vendor/js/jquery.min.js" %}"></script>
+<script src="{% static "hose/vendor/js/bootstrap.bundle.min.js" %}"></script>
+<script src="{% static "hose/vendor/js/jquery.easing.min.js" %}"></script>
+</body>
+</html>

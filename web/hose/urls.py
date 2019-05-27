@@ -1,9 +1,18 @@
+from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from .views import pages, api
 
-# page end points
+# session end point
 urlpatterns = [
+    path(r"accounts/login/", auth_views.LoginView.as_view(template_name="hose/accounts/login.html"),
+         name="accounts_login"),
+    path(r"accounts/logout/", auth_views.LogoutView.as_view(template_name="hose/accounts/login.html"),
+         name="accounts_logout"),
+]
+
+# page end points
+urlpatterns += [
     path("", pages.list, name="list-index"),
     path("link", pages.link, name="link-index"),
     path("check", pages.check, name="check-index"),
