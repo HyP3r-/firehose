@@ -1,4 +1,5 @@
 {% extends "hose/base.html" %}
+{% load static %}
 
 {% block title %}Prüfung/Verschiebung{% endblock %}
 {% block title-page %}Prüfung/Verschiebung{% endblock %}
@@ -13,5 +14,42 @@
 {% endblock %}
 
 {% block content %}
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="inputBarcodes">Barcodes/Schlauchnummer:</label>
+        <div class="col-sm-10">
+            <textarea class="form-control" id="inputBarcodes" rows="10"></textarea>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="inputEvent">Ereignis:</label>
+        <div class="col-sm-10">
+            <select class="form-control" id="inputEvent">
+            </select>
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="inputDescription">Bemerkung:</label>
+        <div class="col-sm-10">
+            <input class="form-control" id="inputDescription" placeholder="Bemerkung" type="text">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label" for="inputDate">Datum:</label>
+        <div class="col-sm-4">
+            <input class="form-control text-center" id="inputDate" type="date">
+        </div>
+        <label class="col-sm-2 col-form-label" for="inputTime">Uhrzeit:</label>
+        <div class="col-sm-4">
+            <input class="form-control text-center" id="inputTime" type="time">
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-10">
+            <button class="btn btn-primary" id="buttonCheck">Verarbeiten</button>
+        </div>
+    </div>
+{% endblock %}
 
+{% block js-content %}
+    <script src="{% static "hose/js/check.js" %}"></script>
 {% endblock %}
