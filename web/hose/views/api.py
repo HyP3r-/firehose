@@ -143,3 +143,38 @@ class ListHose(APIView):
         hose_id = request.data.get("hoseId")
         Hose.objects.filter(id=hose_id).delete()
         return HttpResponse(status=200)
+
+
+@api_view(["GET"])
+@permission_classes((IsAuthenticated,))
+def link_hose_numbers(request):
+    """
+    Return list of hose numbers
+    """
+
+    hoses = Hose.objects.order_by("number").all()
+    response = [{
+        "id": hose.id,
+        "number": hose.number,
+    } for hose in hoses]
+    return JsonResponse({"hoses": response})
+
+
+@api_view(["POST"])
+@permission_classes((IsAuthenticated,))
+def link_bind(request):
+    """
+    Link barcode to hose
+    """
+
+    id = int(request.data["id"])
+    barcode = str(request.data["barcode"])
+
+    if len(barcode) != 7:
+        return HttpResponseBadRequest()
+
+    hose = Hose.objects.filter(id=id).first()
+    hose.barcode = barcode
+    hose.save()
+
+    return HttpResponse(status=200)
