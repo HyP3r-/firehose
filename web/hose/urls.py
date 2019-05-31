@@ -21,12 +21,13 @@ urlpatterns += [
 
 # api end points
 urlpatterns += [
+    path("api/general/hoseEvents", api.list_hoses_events),
+    path("api/general/hoseManufacturers", api.list_hoses_manufacturers),
+    path("api/general/hoseTypes", api.list_hoses_types),
+    path("api/link/bind", api.link_bind),
+    path("api/link/hoseNumbers", api.link_hose_numbers),
     path("api/list/history", api.list_history),
     path("api/list/hose", api.ListHose.as_view()),
-    path("api/list/hoseEvents", api.list_hoses_events),
-    path("api/list/hoseManufacturers", api.list_hoses_manufacturers),
     path("api/list/hoses", api.list_hoses),
-    path("api/list/hoseTypes", api.list_hoses_types),
-    path("api/link/hoseNumbers", api.link_hose_numbers),
-    path("api/link/bind", api.link_bind),
+    path("api/list/check", api.check),
 ]

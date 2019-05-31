@@ -14,7 +14,7 @@ $(function () {
  * Load list of Hose Manufacturers
  */
 function loadHoseManufacturers() {
-    $.get("/api/list/hoseManufacturers"
+    $.get("/api/general/hoseManufacturers"
     ).done(function (data) {
         $.each(data.hoseManufacturers, function (index, element) {
             hoseManufacturers[element.id] = element;
@@ -27,7 +27,7 @@ function loadHoseManufacturers() {
  * Load list of Hose Types
  */
 function loadHoseTypes() {
-    $.get("/api/list/hoseTypes"
+    $.get("/api/general/hoseTypes"
     ).done(function (data) {
         $.each(data.hoseTypes, function (index, element) {
             hoseTypes[element.id] = element;
@@ -40,7 +40,7 @@ function loadHoseTypes() {
  * Load list of Hose Types
  */
 function loadHoseEvents() {
-    $.get("/api/list/hoseEvents"
+    $.get("/api/general/hoseEvents"
     ).done(function (data) {
         $.each(data.hoseEvents, function (index, element) {
             hoseEvents[element.id] = element;

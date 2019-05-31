@@ -1,4 +1,5 @@
-from django.db.models import OuterRef, Subquery
+import dateutil.parser
+from django.db.models import OuterRef, Subquery, Q
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.http.response import HttpResponse
 from rest_framework.decorators import api_view, permission_classes
@@ -170,7 +171,7 @@ def link_bind(request):
     id = int(request.data["id"])
     barcode = str(request.data["barcode"])
 
-    if len(barcode) != 7:
+    if len(barcode) != 7 or not barcode.isdigit():
         return HttpResponseBadRequest()
 
     hose = Hose.objects.filter(id=id).first()
@@ -178,3 +179,43 @@ def link_bind(request):
     hose.save()
 
     return HttpResponse(status=200)
+
+
+@api_view(["POST"])
+@permission_classes((IsAuthenticated,))
+def check(request):
+    """
+    Check list of hoses
+    """
+
+    barcodes = request.data["barcodes"]
+    date = dateutil.parser.parse(request.data["date"])
+    description = request.data["description"]
+    hose_event_id = request.data["hoseEventId"]
+
+    response = []
+
+    for barcode in barcodes:
+        if not barcode.isdigit():
+            continue
+
+        hose = Hose.objects.filter(Q(barcode=barcode) | Q(number=barcode)).first()
+        hose_event = HoseEvent.objects.filter(id=hose_event_id).first()
+
+        if not hose:
+            response.append({"barcode": barcode, "status": 1})
+            continue
+
+        try:
+            hose_history = HoseHistory()
+            hose_history.date = date
+            hose_history.description = description
+            hose_history.hose = hose
+            hose_history.hose_event = hose_event
+            hose_history.user = request.user
+            hose_history.save()
+            response.append({"barcode": barcode, "status": 0})
+        except Exception as e:
+            response.append({"barcode": barcode, "status": 2})
+
+    return JsonResponse({"status": response})
