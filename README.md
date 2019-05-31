@@ -1,6 +1,8 @@
 # Firehose
 Project to manage fire hoses. This project is based on a web-based interface which was realized with Python and Django.
 
+![Screenshot](https://raw.githubusercontent.com/HyP3r-/firehose/master/screenshot.png)
+
 ## Installation
 This installation was tested on Debian 9 (stretch) but should work on all environments which a current version of python.
 
