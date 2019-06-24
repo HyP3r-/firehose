@@ -39,9 +39,24 @@ $.each(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "
 /**
  * Switch local of moment.js
  */
-moment.locale(window.navigator.userLanguage || window.navigator.language);
+var browserLanguage = window.navigator.userLanguage || window.navigator.language;
+moment.locale(browserLanguage);
 
 /**
  * Configure pace.js
  */
 Pace.start({ajax: {trackMethods: ["GET", "POST"]}});
+
+/**
+ * Configure language for jquery data tables
+ */
+var languageMapping = {
+    "de": "/static/hose/vendor/lang/jquery.dataTables.german.json",
+    "en": "/static/hose/vendor/lang/jquery.dataTables.english.lang"
+};
+
+$.extend(true, $.fn.dataTable.defaults, {
+    language: {
+        url: languageMapping[browserLanguage in languageMapping ? browserLanguage : "en"]
+    }
+});
