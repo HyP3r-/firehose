@@ -242,8 +242,6 @@ function loadHistory() {
         });
 
         hoseHistory.modal("show");
-    }).fail(function () {
-        // TODO: show error modal
     });
 }
 
@@ -256,8 +254,6 @@ function hoseDelete(row, id) {
     ).done(function (data) {
         hoseHistory.modal("hide");
         dataTable.row(row).remove().draw();
-    }).fail(function () {
-        // TODO: show error modal
     });
 }
 
