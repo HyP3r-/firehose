@@ -22,7 +22,6 @@ $.ajaxSetup({
     }
 });
 
-
 /**
  * Helper function for post requests
  */
@@ -37,8 +36,12 @@ $.each(["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS", "CONNECT", "
     };
 });
 
-
 /**
  * Switch local of moment.js
  */
 moment.locale(window.navigator.userLanguage || window.navigator.language);
+
+/**
+ * Configure pace.js
+ */
+Pace.start({ajax: {trackMethods: ["GET", "POST"]}});
