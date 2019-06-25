@@ -16,8 +16,10 @@ $(function () {
 function loadHoseManufacturers() {
     $.get("/api/general/hoseManufacturers"
     ).done(function (data) {
+        var hoseManufacturer = $("#hoseManufacturer");
         $.each(data.hoseManufacturers, function (index, element) {
             hoseManufacturers[element.id] = element;
+            hoseManufacturer.append($("<option/>", {text: element.name, value: element.id}))
         });
         loadHoseTypes();
     });
@@ -29,8 +31,10 @@ function loadHoseManufacturers() {
 function loadHoseTypes() {
     $.get("/api/general/hoseTypes"
     ).done(function (data) {
+        var hoseType = $("#hoseType");
         $.each(data.hoseTypes, function (index, element) {
             hoseTypes[element.id] = element;
+            hoseType.append($("<option/>", {text: element.name, value: element.id}))
         });
         loadHoseEvents();
     });
@@ -253,7 +257,7 @@ function hoseDelete(row, id) {
     $.deleteJSON("/api/list/hose", {hoseId: id}
     ).done(function (data) {
         hoseHistory.modal("hide");
-        dataTable.row(row).remove().draw();
+        dataTable.row(row).remove().draw("page");
     });
 }
 
@@ -262,6 +266,13 @@ function hoseDelete(row, id) {
  */
 function updateHoses(hoses) {
     var listTable = $("#listTable");
+
+    // destroy old table
+    if ($.fn.dataTable.isDataTable("#listTable")) {
+        listTable.DataTable().destroy();
+    }
+
+    // create new table
     dataTable = listTable.DataTable({
         autoWidth: false,
         buttons: {
@@ -272,7 +283,10 @@ function updateHoses(hoses) {
             buttons: [
                 {
                     action: function (e, dt, node, config) {
-                        // TODO: show modal and so on...
+                        var hoseAdd = $("#hoseAdd");
+                        $("#hoseAddConfirm").off().one("click", addHose);
+                        hoseAdd.find("form").trigger("reset");
+                        hoseAdd.modal("show");
                     },
                     className: "btn-success btn-sm",
                     text: function (dt, button, config) {
@@ -391,3 +405,60 @@ function updateHoses(hoses) {
     });
 }
 
+/**
+ * Handle creation of hose
+ */
+function addHose() {
+    var hoseAddDanger = $("#hoseAddDanger");
+    var hoseAdd = $("#hoseAdd");
+    var fields = [
+        {conversion: parseInt, field: "number", source: $("#hoseNumber"), test: /^\d+$/},
+        {conversion: parseInt, field: "hoseTypeId", source: $("#hoseType"), test: /^\d+$/},
+        {conversion: parseFloat, field: "length", source: $("#hoseLength"), test: /^[0-9]*\.?[0-9]+$/},
+        {
+            conversion: function (value) {
+                return value;
+            }, field: "description", source: $("#hoseDescription"), test: /^.*$/
+        },
+        {conversion: parseInt, field: "hoseManufacturerId", source: $("#hoseManufacturer"), test: /^\d+$/},
+        {conversion: parseInt, field: "buildYear", source: $("#hoseBuildYear"), test: /^\d{4}$/},
+        {
+            conversion: function (value) {
+                return value === "" ? null : parseInt(value)
+            }, field: "barcode", source: $("#hoseBarcode"), test: /^(\d{7}|)$/
+        }
+    ];
+
+    var overallResult = true;
+    var request = {};
+
+    // check fields
+    $.each(fields, function (index, element) {
+        var value = element.source.val();
+        var result = element.test.test(value);
+        element.source.removeClass("is-valid is-invalid");
+        element.source.addClass(result ? "is-valid" : "is-invalid");
+        overallResult = overallResult && result;
+        request[element.field] = element.conversion(value);
+    });
+
+    // return if incorrect input
+    if (!overallResult) {
+        $("#hoseAddConfirm").off().one("click", addHose);
+        return;
+    }
+
+    // send request
+    hoseAdd.find("input,select").prop("disabled", true);
+    $.postJSON("/api/list/hose", request
+    ).done(function (data) {
+        loadHoses();
+        hoseAddDanger.hide();
+        hoseAdd.modal("hide");
+    }).fail(function () {
+        $("#hoseAddConfirm").off().one("click", addHose);
+        hoseAddDanger.show();
+    }).always(function () {
+        hoseAdd.find("input,select").prop("disabled", false);
+    });
+}

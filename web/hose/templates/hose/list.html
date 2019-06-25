@@ -35,8 +35,80 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" id="hoseDelete">Löschen</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+                    <button class="btn btn-danger" id="hoseDelete" type="button">Löschen</button>
+                    <button class="btn btn-secondary" data-dismiss="modal" type="button">Schließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade bd-example-modal-lg" id="hoseAdd" role="dialog" tabindex="-1">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Schlauch Hinzufügen</h5>
+                    <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="needs-validation" novalidate>
+                        <div class="alert alert-danger" id="hoseAddDanger" role="alert" style="display: none;">
+                            Fehler beim Hinzufügen
+                        </div>
+                        <div class="form-group">
+                            <label for="hoseNumber">Schlauch Nummer</label>
+                            <input class="form-control" id="hoseNumber" placeholder="Schlauch Nummer" required
+                                   type="text">
+                            <div class="invalid-feedback">
+                                Es muss eine Nummer angegeben werden
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="hoseType">Schlauch Typ</label>
+                            <select class="form-control" id="hoseType" required>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="hoseLength">Länge</label>
+                            <div class="input-group">
+                                <input class="form-control" id="hoseLength" placeholder="Länge" required type="text">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">m</span>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Es muss eine Länge angegeben werden
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="hoseDescription">Beschreibung</label>
+                            <input type="text" class="form-control" id="hoseDescription" placeholder="Beschreibung">
+                        </div>
+                        <div class="form-group">
+                            <label for="hoseManufacturer">Hersteller</label>
+                            <select class="form-control" id="hoseManufacturer" required>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="hoseBuildYear">Baujahr</label>
+                            <input class="form-control" id="hoseBuildYear" placeholder="Baujahr" required type="text">
+                            <div class="invalid-feedback">
+                                Es muss ein Jahr angegeben werden
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="hoseBarcode">Barcode</label>
+                            <input type="text" class="form-control" id="hoseBarcode" placeholder="Barcode">
+                            <div class="invalid-feedback">
+                                Barcode muss entweder leer or eine siebenstellige Zahl sein
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal" type="button">Abbrechen</button>
+                    <button class="btn btn-success" id="hoseAddConfirm" type="button">Hinzufügen</button>
                 </div>
             </div>
         </div>

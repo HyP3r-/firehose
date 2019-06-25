@@ -105,7 +105,17 @@ class ListHose(APIView):
         Create Hose
         """
 
-        pass
+        hose = Hose()
+        hose.barcode = request.data["barcode"]
+        hose.build_year = request.data["buildYear"]
+        hose.description = request.data["description"]
+        hose.hose_manufacturer_id = request.data["hoseManufacturerId"]
+        hose.hose_type_id = request.data["hoseTypeId"]
+        hose.length = request.data["length"]
+        hose.number = request.data["number"]
+        hose.save()
+
+        return HttpResponse(status=200)
 
     def put(self, request, format=None):
         """
