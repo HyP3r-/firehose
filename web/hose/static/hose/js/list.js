@@ -264,6 +264,23 @@ function updateHoses(hoses) {
     var listTable = $("#listTable");
     dataTable = listTable.DataTable({
         autoWidth: false,
+        buttons: {
+            dom: {
+                button: {className: "btn"},
+                container: {className: "dt-buttons btn-group align-top mr-2"}
+            },
+            buttons: [
+                {
+                    action: function (e, dt, node, config) {
+                        // TODO: show modal and so on...
+                    },
+                    className: "btn-success btn-sm",
+                    text: function (dt, button, config) {
+                        return dt.i18n("buttons.add", "Add");
+                    }
+                }
+            ]
+        },
         columns: [
             {
                 className: "align-middle font-weight-bold",
@@ -363,8 +380,13 @@ function updateHoses(hoses) {
         },
         data: hoses,
         drawCallback: function () {
+            // bind button handler
             listTable.find("tbody td input,select").change(fieldChanged);
             listTable.find("tbody td button").click(loadHistory);
+        },
+        initComplete: function (settings, json) {
+            // add buttons to the data table
+            dataTable.buttons().container().prependTo($(".dataTables_filter", dataTable.table().container()));
         }
     });
 }
