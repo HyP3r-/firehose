@@ -340,7 +340,7 @@ function updateHoses(hoses) {
                 data: "barcode",
                 title: "Barcode",
                 render: function (data, type, row, meta) {
-                    return createInput(data, type, row, meta, "barcode", "6em", ["text-center"], "Barcode", "int");
+                    return createInput(data, type, row, meta, "barcode", "6em", ["text-center"], "Barcode", "string");
                 }
             },
             {
@@ -424,7 +424,7 @@ function addHose() {
         {conversion: parseInt, field: "buildYear", source: $("#hoseBuildYear"), test: /^\d{4}$/},
         {
             conversion: function (value) {
-                return value === "" ? null : parseInt(value)
+                return value === "" ? null : value
             }, field: "barcode", source: $("#hoseBarcode"), test: /^(\d{7}|)$/
         }
     ];
