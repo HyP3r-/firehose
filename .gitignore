@@ -3,3 +3,7 @@
 
 ### Python
 venv
+__pycache__
+
+### Django
+web/static
